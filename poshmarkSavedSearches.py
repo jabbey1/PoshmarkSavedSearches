@@ -1,14 +1,12 @@
 import webbrowser
 from os import path
 
-searchURL = 'https://poshmark.com/search?query=fjallraven&sort_by=added_desc&my_size=true&department=Men'
-# TODO put insid menu class?
 searches_dict = {}
 
 def open_search(url: str):
     webbrowser.open(url)
 
-def get_savedsearches():
+def get_saved_searches():
     searches_dict.clear()
     with open('savedsearches.txt', 'r') as file:
         for line in file:
@@ -37,7 +35,7 @@ def write_txt_from_dict():
     with open('savedsearches.txt', 'w') as file:
         for label, url in searches_dict.items():
             file.write(f'{label},{url}\n')
-    get_savedsearches()
+    get_saved_searches()
 
 def delete_search(label):
     try:
@@ -65,12 +63,6 @@ class SearchCreator:
                         'Headphones','Portable Audio & Video']
     departments_dict = {'Women':women_list,'Men':men_list,'Kids':kids_list,'Home':home_list,'Pets':pets_list,
                         'Electronics':electronics_list,'None':none_list}
-    ''' Size Options
-    To cover, Women's: Shoes, Dresses, Jeans, pants &jumpsuits, sweaters
-    Men's: shoes, pants, shirts, suits & blazers, sweaters
-    kids: shoes, bottoms, shirts & tops
-    '''
-    # size = ()
     color_list = ('Black','White','Orange','Purple','Red','Green','Pink','Blue','Gray','Silver','Yellow','Gold','Brown','Cream','Tan','')
     sort_by_dict = {'Just Shared':'best_match','Just In':'added_desc','Oldest':'added_asc','Price High to Low':'price_desc',
                'Price Low to High':'price_asc','Recently Price Dropped':'price_drop','Likes':'like_count','Relevance':'relevance_v2'}
@@ -126,9 +118,8 @@ class SearchCreator:
                 print('Invalid response. Please answer "y" or "n"')
     
     def get_size_input():
-        # TODO add a list of options at some point
-        size = []
         while True:
+            size = []
             answer = input('Would you like to turn on "My size" filter for this search? Answer y/n\n')
             if answer == 'n':
                 break
@@ -160,7 +151,6 @@ class SearchCreator:
                     if c == '':
                         continue
                     options += c + ', '
-                # TODO test:
                 options = options[:-2]
                 print(options)
                 while True:
@@ -182,11 +172,11 @@ class SearchCreator:
                 return price
             if answer == 'y':
                 while True:
-                    # TODO input verification
                     min = input('What would you like the minimum to be? Enter "0" for none.\n')
                     max = input('What would you like the maximum price limit to be?\n')
                     if type(min) != int or type(max) != int:
                         print('Invalid entry. Make sure max is higher than min, and that only numbers are entered.\n')
+                        continue
                     elif int(max) >= int(min):
                         break
                     print('Invalid entry. Make sure max is higher than min, and that only numbers are entered.\n')
@@ -217,7 +207,6 @@ class SearchCreator:
         return sort_by
 
     def replace_characters(s):
-        # replace spaces w/ _, and & with %26
         s = s.replace(' ', '_')
         s = s.replace('&', '%26')
         return s
@@ -238,8 +227,6 @@ class SearchCreator:
         color = SearchCreator.get_color_input()
         price = SearchCreator.get_price_input()
         sort_by = SearchCreator.get_sort_input()
-        # TODO test:
-        
         SearchCreator.build_new_search(label, query, category, sub_category, brand, size, color, price, sort_by)
 
     def build_new_search(label: str, query: str, category: str, sub_category: str, brand: list, size: list, color: list, price: str, sort_by: str):
@@ -251,7 +238,7 @@ class SearchCreator:
         brand_str = ''
         for b in brand:
             brand_str += f'&brand[]={b}'
-        # TODO size conversion
+        #size
         size_str = ''
         if size[0] == 'my_size':
             size_str = '&my_size=true'
@@ -276,7 +263,7 @@ class Menu:
         if not path.isfile('savedsearches.txt'):
             with open('savedsearches.txt', 'x'):
                 pass
-        get_savedsearches()
+        get_saved_searches()
     
     def print_menu(self):
         title = 'Poshmark Search Saver'
@@ -301,8 +288,6 @@ class Menu:
         print()
 
     def select_choice(self, selection):
-        # TODO input verification on all
-
         if selection == '1':
             list_searches()
             input('Press enter to return to menu.')
@@ -322,7 +307,6 @@ class Menu:
         if selection == '6':
             s = input('Which search would you like to delete? Make sure the label is an exact match.\n')
             delete_search(s)
-            # TODO only print if actually deleted something
             input('Press enter to return to menu.')
         pass
     
